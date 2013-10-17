@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project-module
+  type="WEB"
+  name="Javawebapp_sqlserver"
+  id="myeclipse.1379065750846"
+  context-root="/Javawebapp_sqlserver"
+  j2ee-spec="6.0"
+  archive="Javawebapp_sqlserver.war">
+  <attributes>
+    <attribute name="webrootdir" value="WebRoot" />
+  </attributes>
+</project-module>
+

@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE sqlMap PUBLIC "-//iBATIS.com//DTD SQL Map 2.0//EN" "http://www.ibatis.com/dtd/sql-map-2.dtd">
+<sqlMap namespace="common_exp">
+	<sql id="Oracle_Pagination_Head">
+		<isNotEmpty property="oracleStart" >
+			<isNotEmpty property="oracleEnd" >
+   				<![CDATA[ select y.* from ( select z.*, rownum as oracleStart from ( ]]>
+   			</isNotEmpty>
+		</isNotEmpty>
+	</sql>
+	<sql id="Oracle_Pagination_Tail">
+		<isNotEmpty property="oracleStart" >
+			<isNotEmpty property="oracleEnd" >
+			<![CDATA[ ) z where rownum <= #{oracleEnd} ) y where y.oracleStart > #{oracleStart} ]]>
+   			</isNotEmpty>
+		</isNotEmpty>		
+	</sql>
+	
+	<select id="sqlQuery" parameterClass="java.lang.String" resultClass="java.util.HashMap" remapResults="true">
+		<![CDATA[
+		$sql$
+		]]>
+	</select>
+	
+	<update id="updateQuery" parameterClass="java.lang.String" >
+		<![CDATA[
+		$sql$
+		]]>
+	</update>
+	
+	<delete id="deleteQuery" parameterClass="java.lang.String" >
+		<![CDATA[
+		$sql$
+		]]>
+	</delete>
+	
+	<insert id="insertQuery" parameterClass="java.util.HashMap" >
+		<selectKey resultClass="java.lang.String" keyProperty="id"> 
+			select newid()
+		</selectKey>		
+		<![CDATA[
+		insert into $Tablename$ ($Columnname$,ID) values ($Columnvalue$,'$id$')
+		]]>		
+	</insert>	
+	
+	<parameterMap class="java.util.HashMap" id="param_P_S_ORDER_H">
+		<parameter property="M00701" javaType="java.lang.String" jdbcType="VARCHAR" mode="IN" />
+		<parameter property="Result" javaType="java.lang.String" jdbcType="VARCHAR" mode="OUT"/>	
+	</parameterMap>
+	
+	<procedure id="Pro_P_S_ORDER_H" parameterMap="param_P_S_ORDER_H">
+		{CALL P_S_ORDER_H(?,?)}
+	</procedure>
+	
+</sqlMap>
+
