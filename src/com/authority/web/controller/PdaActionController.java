@@ -52,9 +52,9 @@ public class PdaActionController {
 	@RequestMapping(value = "/timesyn")
 	@ResponseBody
 	public Object timesysn(HttpSession session, HttpServletRequest request){
-		String sql="select to_char(sysdate-8/24,'YYYYMMDDHH24MISS') time from dual  ";
+		String sql="select CONVERT(VARCHAR(24),DATEADD(hh,-8,GETDATE()),112)+REPLACE(CONVERT(VARCHAR(24),DATEADD(hh,-8,GETDATE()),24),':','') TIME ";
 		System.out.println("====================");
-		return jdbcTemplate.queryForList(sql).get(0);
+		return jdbcTemplate.queryForList(sql).get(0); 
 				
 	}
 	

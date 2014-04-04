@@ -31,6 +31,8 @@ yepnope({
 		rename_url : ctx + '/filemanager/rename',//文件重命名
 		server_url : ctx + '/filemanager/server',//文件提交到服务器
 		
+		bosdatadownload_url : ctx + '/filemanager/bosdatadownload',//文件提交到服务器
+		
 		isdisplay : eval('(${fields.isdisplay==null?"{}":fields.isdisplay})'),
 		role : eval('(${fields.role==null?"{}":fields.role})'),
 		user_role : "${sessionScope.CURRENT_USER_ROLE}",
@@ -381,6 +383,7 @@ yepnope({
 					}					
 					Share.AjaxRequest({
 						url : filemanager.server_url ,
+						timeout : 300000,
 						params : {
 							paths : paths
 						},

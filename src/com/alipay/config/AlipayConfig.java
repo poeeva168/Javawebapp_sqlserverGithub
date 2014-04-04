@@ -3,7 +3,7 @@ package com.alipay.config;
 /* *
  *类名：AlipayConfig
  *功能：基础配置类
- *详细：设置帐户有关信息及返回路径
+ *详细：设置帐户有关信息及返回路径 
  *版本：3.3
  *日期：2012-08-10
  *说明：
@@ -36,7 +36,7 @@ public class AlipayConfig {
 	public static String log_path = "D:\\";
 
 	// 字符编码格式 目前支持 gbk 或 utf-8
-	public static String input_charset = "gbk";
+	public static String input_charset = "utf-8";
 	
 	// 签名方式 不需修改
 	public static String sign_type = "MD5";

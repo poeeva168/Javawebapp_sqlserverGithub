@@ -10,10 +10,13 @@ import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.util.Collection;
 import java.util.Random;
 
@@ -885,6 +888,49 @@ public class FileOperateUtil {
 	 }
 	 
 	 
+	 public static String downloadfile(String saveURL ,String fileURL){
+			int result =0 ;
+			String newfilepath="";
+			File savePath = new File(saveURL);		
+			if(!savePath.exists())
+				savePath.mkdir();
+			
+			String[] urlname = fileURL.split("/");  
+		    int len = urlname.length-1;  
+		    String uname = urlname[len];//获取文件名  
+		    try{
+		       File file = new File(savePath+File.separator+uname);//创建新文件  
+	           if(file!=null && !file.exists()){  
+	               file.createNewFile();  
+	           }           
+	           OutputStream oputstream = new FileOutputStream(file);  
+	           URL url = new URL(fileURL);  
+	           HttpURLConnection uc = (HttpURLConnection) url.openConnection();
+	           uc.setDoInput(true);//设置是否要从 URL 连接读取数据,默认为true  
+	           uc.connect();  
+	           InputStream iputstream = uc.getInputStream();
+	           System.out.println("file size is:"+uc.getContentLength());//打印文件长度  
+	           byte[] buffer = new byte[4*1024];  
+	           int byteRead = -1;     
+	           while((byteRead=(iputstream.read(buffer)))!= -1){  
+	               oputstream.write(buffer, 0, byteRead);  
+	           }  
+	           oputstream.flush();    
+	           iputstream.close();  
+	           oputstream.close();
+	           result = 1;
+	           newfilepath = file.getAbsolutePath();
+	           
+		    }catch(Exception e){
+		    	
+		    	result = 0;
+		    	
+		    }finally{
+		    	
+		    	return result>0?newfilepath:"";
+		    }
+		    
+	}
 	 
 	public static void main(String[] ar) throws RarException, IOException {
 				

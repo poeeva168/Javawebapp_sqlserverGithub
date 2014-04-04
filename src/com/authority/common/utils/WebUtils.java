@@ -5,6 +5,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Enumeration;
@@ -233,12 +234,22 @@ public class WebUtils {
 			Properties props = new Properties(); 
 			// 定义邮件服务器的地址
 			WebUtils web = new WebUtils();
-			props.put("mail.smtp.host", web.readValue("config.properties","email.host"));	
-			props.put("mail.smtp.port", "25"); 
-			props.put("mail.smtp.auth", "true");			
+			
+			props.put("mail.smtp.host", "smtp.exmail.qq.com");
+			props.put("mail.smtp.port","465" );
+			props.put("mail.smtp.starttls.enable","true" );
+			props.put("mail.smtp.auth", "true");
+			props.put("mail.smtp.socketFactory.port", "465");
+			props.put("mail.smtp.socketFactory.class", "javax.net.ssl.SSLSocketFactory");
+			props.put("mail.smtp.socketFactory.fallback", "false");
+			      
+			props.setProperty("mail.imap.socketFactory.class", "javax.net.ssl.SSLSocketFactory");
+			props.setProperty("mail.imap.socketFactory.fallback", "false");
+			props.setProperty("mail.imap.port", "993");
+			props.setProperty("mail.imap.socketFactory.port", "993");
 						
-			final String emailAccount=web.readValue("config.properties","email.account");
-			final String emailPassword=web.readValue("config.properties","email.password");
+			final String emailAccount=web.readValue("config/others/config.properties","email.account");
+			final String emailPassword=web.readValue("config/others/config.properties","email.password");
 			
 			
 			// 取得Session
@@ -271,14 +282,95 @@ public class WebUtils {
 			return true;
 		}
 	    
+	 
+	 static String string2Unicode(String s) {
+	    try {
+	      StringBuffer out = new StringBuffer("");
+	      byte[] bytes = s.getBytes("unicode");
+	      for (int i = 2; i < bytes.length - 1; i += 2) {
+	        out.append("u");
+	        String str = Integer.toHexString(bytes[i + 1] & 0xff);
+	        for (int j = str.length(); j < 2; j++) {
+	          out.append("0");
+	        }
+	        String str1 = Integer.toHexString(bytes[i] & 0xff);
+
+	        out.append(str);
+	        out.append(str1);
+	        out.append(" ");
+	      }
+	      return out.toString().toUpperCase();
+	    }
+	    catch (UnsupportedEncodingException e) {
+	      e.printStackTrace();
+	      return null;
+	    }
+	  } 
+
+	 
+
+	 public  String unicode2String(String unicodeStr){
+	    StringBuffer sb = new StringBuffer();
+	    String str[] = unicodeStr.toUpperCase().split("U");
+	    for(int i=0;i<str.length;i++){
+	      if(str[i].equals("")) continue;
+	      char c = (char)Integer.parseInt(str[i].trim(),16);
+	      sb.append(c);
+	    }
+	    return sb.toString();
+	  }
+
+	 /**
+		 * 把中文转成Unicode码
+		 * @param str
+		 * @return
+		 */
+	public String chinaToUnicode(String str){
+		String result="";
+		for (int i = 0; i < str.length(); i++){
+            int chr1 = (char) str.charAt(i);
+            if(chr1>=19968&&chr1<=171941){//汉字范围 \u4e00-\u9fa5 (中文)
+                result+="\\u" + Integer.toHexString(chr1);
+            }else{
+            	result+=str.charAt(i);
+            }
+        }
+		return result;
+	}
+
+	/**
+	 * 判断是否为中文字符
+	 * @param c
+	 * @return
+	 */
+	public  boolean isChinese(char c) {
+        Character.UnicodeBlock ub = Character.UnicodeBlock.of(c);
+        if (ub == Character.UnicodeBlock.CJK_UNIFIED_IDEOGRAPHS
+                || ub == Character.UnicodeBlock.CJK_COMPATIBILITY_IDEOGRAPHS
+                || ub == Character.UnicodeBlock.CJK_UNIFIED_IDEOGRAPHS_EXTENSION_A
+                || ub == Character.UnicodeBlock.GENERAL_PUNCTUATION
+                || ub == Character.UnicodeBlock.CJK_SYMBOLS_AND_PUNCTUATION
+                || ub == Character.UnicodeBlock.HALFWIDTH_AND_FULLWIDTH_FORMS) {
+            return true;
+        }
+        return false;
+    }
+
+
+		
 	 public static void main(String[] args) {  
         
 		 WebUtils web = new WebUtils();
-		 String address="chenfeng@cugroup.com";
+		 String address="cf@henlo.net";
 		 String title="服务任务指派[技术中心产品开发平台]";
 		 String body ="测试";
 		 try {
 			web.execSend(address, title, body);
+			 /*String unicode_str = web.chinaToUnicode("天空");
+			 System.out.println("unicode_str:"+unicode_str);
+			 System.out.println("china_str:"+web.unicode2String("u7b7eu540du9a8cu8bc1u6ca1u901au8fc7"));*/
+			 
+			 
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

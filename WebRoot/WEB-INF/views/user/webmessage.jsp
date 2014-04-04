@@ -620,7 +620,7 @@ message.myPanel = new Ext.Panel({
 		
 
 //设置权限
-if(message.user_role!='管理员'||message.user_role!='总部'){
+if(message.user_role!='管理员'&&message.user_role!='总部'){
 	message.addAction.setHidden(true);
 	message.deleteAction.setHidden(true);
 	message.editAction.setHidden(true);

@@ -655,9 +655,9 @@ public class WebFilemanagerController {
 			List<Map<String,Object>> list = jdbcTemplate.queryForList(query);
 			String[] col_id = {"MASTERID","BILLDATE","SALETYPE","ORIG","DEST","DATEOUT","DATEIN","OPR","OPDATE","SKU","PREQTY","QTYOUT","QTYIN"};
 			String[] col_name = {"单据编号","单据日期","销售类型","发货店仓","收货店仓","出库日期","入库日期","制单人","制单日期","条码","销售数量","出库数量","入库数量"};
-			String filePath = file.getParentFile().getPath()+File.separator+"Done"+File.separator+"TBusSale_"+xlstime+".xls";			
+			String filePath = file.getParentFile().getPath()+File.separator+"Done"+File.separator+"TBusSale_"+xlstime+".xlsx";			
 			if(list.size()>0)
-				PoiHelper.Excel_Generate(list, col_id, col_name, filePath);
+				PoiHelper.Excel_Generate(list, col_id, col_name, filePath,true);
 		}
 		//将处理失败的记录写入Excel 到 Failed 文件夹
 		if(1>0){
@@ -665,9 +665,9 @@ public class WebFilemanagerController {
 			List<Map<String,Object>> list = jdbcTemplate.queryForList(query);
 			String[] col_id = {"MASTERID","BILLDATE","SALETYPE","ORIG","DEST","DATEOUT","DATEIN","OPR","OPDATE","SKU","PREQTY","QTYOUT","QTYIN","NOTE"};
 			String[] col_name = {"单据编号","单据日期","销售类型","发货店仓","收货店仓","出库日期","入库日期","制单人","制单日期","条码","销售数量","出库数量","入库数量","备注"};
-			String filePath = file.getParentFile().getPath()+File.separator+"Failed"+File.separator+"TBusSale_"+xlstime+".xls";			
+			String filePath = file.getParentFile().getPath()+File.separator+"Failed"+File.separator+"TBusSale_"+xlstime+".xlsx";			
 			if(list.size()>0)
-				PoiHelper.Excel_Generate(list, col_id, col_name, filePath);
+				PoiHelper.Excel_Generate(list, col_id, col_name, filePath,true);
 		}
 				
 		//删除历史失败的记录 操作用户所插入记录
@@ -692,7 +692,7 @@ public class WebFilemanagerController {
 		Boolean check = true ;
 		//判断Excel 格式是否符合标准
 		String[] DataArrayChild = DataArray.get(0);
-		String[] DataArrayChildStandard = {"MasterId","BillDate","Store","TPayAmount","Opr","OpDate","Sku","Qty","FAmount"};
+		String[] DataArrayChildStandard = {"MasterId","BillDate","Store","Opr","OpDate","Sku","Qty","Price","FAmount"};
 		for (int i = 0; i < DataArrayChildStandard.length; i++) {
 			if(!DataArrayChildStandard[i].toLowerCase().equals(DataArrayChild[i].toLowerCase().trim())){
 				msg="1.零售单格式不正确;请删除文件重新上传!";
@@ -722,21 +722,21 @@ public class WebFilemanagerController {
 		if(1>0){
 			query = "select * from TBusRetail_TMP where status = 1 and addwho='"+Account+"' and CONVERT(varchar(12) , addtime, 112 ) = CONVERT(varchar(12) , getdate(), 112 ) ";
 			List<Map<String,Object>> list = jdbcTemplate.queryForList(query);
-			String[] col_id = {"MASTERID","BILLDATE","STORE","TPAYAMOUNT","OPR","OPDATE","SKU","QTY","FAMOUNT"};
-			String[] col_name = {"单据编号","单据日期","店仓","总付款金额","制单人","制单日期","条码","数量","单条总额"};
-			String filePath = file.getParentFile().getPath()+File.separator+"Done"+File.separator+"TBusRetail_"+xlstime+".xls";			
+			String[] col_id = {"MASTERID","BILLDATE","STORE","OPR","OPDATE","SKU","QTY","PRICE","FAMOUNT"};
+			String[] col_name = {"单据编号","单据日期","店仓","制单人","制单日期","条码","数量","成交价","成交总额"};
+			String filePath = file.getParentFile().getPath()+File.separator+"Done"+File.separator+"TBusRetail_"+xlstime+".xlsx";			
 			if(list.size()>0)
-				PoiHelper.Excel_Generate(list, col_id, col_name, filePath);
+				PoiHelper.Excel_Generate(list, col_id, col_name, filePath,true);
 		}
 		//将处理失败的记录写入Excel 到 Failed 文件夹
 		if(1>0){
 			query = "select * from TBusRetail_TMP where status = 2 and addwho='"+Account+"' and CONVERT(varchar(12) , addtime, 112 ) = CONVERT(varchar(12) , getdate(), 112 ) ";
 			List<Map<String,Object>> list = jdbcTemplate.queryForList(query);
-			String[] col_id = {"MASTERID","BILLDATE","STORE","TPAYAMOUNT","OPR","OPDATE","SKU","QTY","FAMOUNT","NOTE"};
-			String[] col_name = {"单据编号","单据日期","店仓","总付款金额","制单人","制单日期","条码","数量","单条总额","备注"};
-			String filePath = file.getParentFile().getPath()+File.separator+"Failed"+File.separator+"TBusRetail_"+xlstime+".xls";			
+			String[] col_id = {"MASTERID","BILLDATE","STORE","OPR","OPDATE","SKU","QTY","PRICE","FAMOUNT","NOTE"};
+			String[] col_name = {"单据编号","单据日期","店仓","制单人","制单日期","条码","数量","成交价","成交总额","备注"};
+			String filePath = file.getParentFile().getPath()+File.separator+"Failed"+File.separator+"TBusRetail_"+xlstime+".xlsx";			
 			if(list.size()>0)
-				PoiHelper.Excel_Generate(list, col_id, col_name, filePath);
+				PoiHelper.Excel_Generate(list, col_id, col_name, filePath,true);
 		}
 				
 		//删除历史失败的记录 操作用户所插入记录
@@ -794,9 +794,9 @@ public class WebFilemanagerController {
 			List<Map<String,Object>> list = jdbcTemplate.queryForList(query);
 			String[] col_id = {"MASTERID","BILLDATE","ORIG","DEST","DATEOUT","DATEIN","OPR","OPDATE","SKU","PREQTY","QTYOUT","QTYIN"};
 			String[] col_name = {"单据编号","单据日期","发货店仓","收货店仓","出库日期","入库日期","制单人","制单日期","条码","销售退货数量","出库数量","入库数量"};
-			String filePath = file.getParentFile().getPath()+File.separator+"Done"+File.separator+"TBusSalRet_"+xlstime+".xls";			
+			String filePath = file.getParentFile().getPath()+File.separator+"Done"+File.separator+"TBusSalRet_"+xlstime+".xlsx";			
 			if(list.size()>0)
-				PoiHelper.Excel_Generate(list, col_id, col_name, filePath);
+				PoiHelper.Excel_Generate(list, col_id, col_name, filePath,true);
 		}
 		//将处理失败的记录写入Excel 到 Failed 文件夹
 		if(1>0){
@@ -804,9 +804,9 @@ public class WebFilemanagerController {
 			List<Map<String,Object>> list = jdbcTemplate.queryForList(query);
 			String[] col_id = {"MASTERID","BILLDATE","ORIG","DEST","DATEOUT","DATEIN","OPR","OPDATE","SKU","PREQTY","QTYOUT","QTYIN","NOTE"};
 			String[] col_name = {"单据编号","单据日期","发货店仓","收货店仓","出库日期","入库日期","制单人","制单日期","条码","销售退货数量","出库数量","入库数量","备注"};
-			String filePath = file.getParentFile().getPath()+File.separator+"Failed"+File.separator+"TBusSalRet_"+xlstime+".xls";			
+			String filePath = file.getParentFile().getPath()+File.separator+"Failed"+File.separator+"TBusSalRet_"+xlstime+".xlsx";			
 			if(list.size()>0)
-				PoiHelper.Excel_Generate(list, col_id, col_name, filePath);
+				PoiHelper.Excel_Generate(list, col_id, col_name, filePath,true);
 		}
 				
 		//删除历史失败的记录 操作用户所插入记录
@@ -864,9 +864,9 @@ public class WebFilemanagerController {
 			List<Map<String,Object>> list = jdbcTemplate.queryForList(query);
 			String[] col_id = {"MASTERID","BILLDATE","ORIG","DEST","DATEOUT","DATEIN","OPR","OPDATE","SKU","QTYTRAN","QTYOUT","QTYIN"};
 			String[] col_name = {"单据编号","单据日期","发货店仓","收货店仓","出库日期","入库日期","制单人","制单日期","条码","调拨数量","出库数量","入库数量"};
-			String filePath = file.getParentFile().getPath()+File.separator+"Done"+File.separator+"TBusTran_"+xlstime+".xls";			
+			String filePath = file.getParentFile().getPath()+File.separator+"Done"+File.separator+"TBusTran_"+xlstime+".xlsx";			
 			if(list.size()>0)
-				PoiHelper.Excel_Generate(list, col_id, col_name, filePath);
+				PoiHelper.Excel_Generate(list, col_id, col_name, filePath,true);
 		}
 		//将处理失败的记录写入Excel 到 Failed 文件夹
 		if(1>0){
@@ -874,9 +874,9 @@ public class WebFilemanagerController {
 			List<Map<String,Object>> list = jdbcTemplate.queryForList(query);
 			String[] col_id = {"MASTERID","BILLDATE","ORIG","DEST","DATEOUT","DATEIN","OPR","OPDATE","SKU","QTYTRAN","QTYOUT","QTYIN","NOTE"};
 			String[] col_name = {"单据编号","单据日期","发货店仓","收货店仓","出库日期","入库日期","制单人","制单日期","条码","调拨数量","出库数量","入库数量","备注"};
-			String filePath = file.getParentFile().getPath()+File.separator+"Failed"+File.separator+"TBusTran_"+xlstime+".xls";			
+			String filePath = file.getParentFile().getPath()+File.separator+"Failed"+File.separator+"TBusTran_"+xlstime+".xlsx";			
 			if(list.size()>0)
-				PoiHelper.Excel_Generate(list, col_id, col_name, filePath);
+				PoiHelper.Excel_Generate(list, col_id, col_name, filePath,true);
 		}
 				
 		//删除历史失败的记录 操作用户所插入记录
@@ -934,9 +934,9 @@ public class WebFilemanagerController {
 			List<Map<String,Object>> list = jdbcTemplate.queryForList(query);
 			String[] col_id = {"MASTERID","BILLDATE","STORE","REMARK","OPR","OPDATE","SKU","QTY"};
 			String[] col_name = {"单据编号","单据日期","店仓","调整原因","制单人","制单日期","条码","数量"};
-			String filePath = file.getParentFile().getPath()+File.separator+"Done"+File.separator+"TBusAdj_"+xlstime+".xls";			
+			String filePath = file.getParentFile().getPath()+File.separator+"Done"+File.separator+"TBusAdj_"+xlstime+".xlsx";			
 			if(list.size()>0)
-				PoiHelper.Excel_Generate(list, col_id, col_name, filePath);
+				PoiHelper.Excel_Generate(list, col_id, col_name, filePath,true);
 		}
 		//将处理失败的记录写入Excel 到 Failed 文件夹
 		if(1>0){
@@ -944,9 +944,9 @@ public class WebFilemanagerController {
 			List<Map<String,Object>> list = jdbcTemplate.queryForList(query);
 			String[] col_id = {"MASTERID","BILLDATE","STORE","REMARK","OPR","OPDATE","SKU","QTY","NOTE"};
 			String[] col_name = {"单据编号","单据日期","店仓","调整原因","制单人","制单日期","条码","数量","备注"};
-			String filePath = file.getParentFile().getPath()+File.separator+"Failed"+File.separator+"TBusAdj_"+xlstime+".xls";			
+			String filePath = file.getParentFile().getPath()+File.separator+"Failed"+File.separator+"TBusAdj_"+xlstime+".xlsx";			
 			if(list.size()>0)
-				PoiHelper.Excel_Generate(list, col_id, col_name, filePath);
+				PoiHelper.Excel_Generate(list, col_id, col_name, filePath,true);
 		}
 				
 		//删除历史失败的记录 操作用户所插入记录
@@ -1004,9 +1004,9 @@ public class WebFilemanagerController {
 			List<Map<String,Object>> list = jdbcTemplate.queryForList(query);
 			String[] col_id = {"MASTERID","BILLDATE","STORE","OPR","OPDATE","SKU","PreQty"};
 			String[] col_name = {"单据编号","单据日期","店仓","制单人","制单日期","条码","实际盘点数量"};
-			String filePath = file.getParentFile().getPath()+File.separator+"Done"+File.separator+"TBusPand_"+xlstime+".xls";			
+			String filePath = file.getParentFile().getPath()+File.separator+"Done"+File.separator+"TBusPand_"+xlstime+".xlsx";			
 			if(list.size()>0)
-				PoiHelper.Excel_Generate(list, col_id, col_name, filePath);
+				PoiHelper.Excel_Generate(list, col_id, col_name, filePath,true);
 		}
 		//将处理失败的记录写入Excel 到 Failed 文件夹
 		if(1>0){
@@ -1014,9 +1014,9 @@ public class WebFilemanagerController {
 			List<Map<String,Object>> list = jdbcTemplate.queryForList(query);
 			String[] col_id = {"MASTERID","BILLDATE","STORE","OPR","OPDATE","SKU","PreQty","NOTE"};
 			String[] col_name = {"单据编号","单据日期","店仓","制单人","制单日期","条码","实际盘点数量","备注"};
-			String filePath = file.getParentFile().getPath()+File.separator+"Failed"+File.separator+"TBusPand_"+xlstime+".xls";			
+			String filePath = file.getParentFile().getPath()+File.separator+"Failed"+File.separator+"TBusPand_"+xlstime+".xlsx";			
 			if(list.size()>0)
-				PoiHelper.Excel_Generate(list, col_id, col_name, filePath);
+				PoiHelper.Excel_Generate(list, col_id, col_name, filePath ,true);
 		}
 				
 		//删除历史失败的记录 操作用户所插入记录

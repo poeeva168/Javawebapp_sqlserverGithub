@@ -14,7 +14,7 @@ import com.authority.pojo.Category;
 @Component("articleClient")
 public class ArticleClient {
 
-	@Autowired
+	@Autowired 
 	protected RestTemplate restTemplate;
 
 	private final static String articleServiceUrl = "http://localhost:8080/JavaWebapp/restful/";

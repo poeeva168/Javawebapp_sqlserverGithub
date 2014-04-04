@@ -10,7 +10,9 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
  
 import org.apache.poi.hssf.usermodel.HSSFCell;
 import org.apache.poi.hssf.usermodel.HSSFDateUtil;
@@ -18,137 +20,34 @@ import org.apache.poi.hssf.usermodel.HSSFRow;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
+
+import com.authority.common.utils.PoiHelper;
  
 public class ExcelOperate {
  
     public static void main(String[] args) throws Exception {
-       File file = new File("D:\\ExcelDemo.xls");
-       String[][] result = getData(file, 1);
-       int rowLength = result.length;
-       for(int i=0;i<rowLength;i++) {
-           for(int j=0;j<result[i].length;j++) {
-              System.out.print(result[i][j]+"\t\t");
-           }
-           System.out.println();
-       }
-      
-    }
-    /**
-     * 读取Excel的内容，第一维数组存储的是一行中格列的值，二维数组存储的是多少个行
-     * @param file 读取数据的源Excel
-     * @param ignoreRows 读取数据忽略的行数，比如行头不需要读入 忽略的行数为1
-     * @return 读出的Excel中数据的内容
-     * @throws FileNotFoundException
-     * @throws IOException
-     */
-    public static String[][] getData(File file, int ignoreRows)
-           throws FileNotFoundException, IOException {
-       List<String[]> result = new ArrayList<String[]>();
-       int rowSize = 0;
-       BufferedInputStream in = new BufferedInputStream(new FileInputStream(
-              file));
-      
-       // 打开HSSFWorkbook  第一种
-       POIFSFileSystem fs = new POIFSFileSystem(in);
-       HSSFWorkbook wb = new HSSFWorkbook(fs);       
+       String[] col_id = {"MASTERID","BILLDATE"};
+       String[] col_name = {"单据编号","单据日期"};
+       String filePath = "D:\\data\\ExcelDemo.xls";
        
-       HSSFCell cell = null;
-       for (int sheetIndex = 0; sheetIndex < wb.getNumberOfSheets(); sheetIndex++) {
-           HSSFSheet st = wb.getSheetAt(sheetIndex);
-           // 第一行为标题，不取
-           for (int rowIndex = ignoreRows; rowIndex <= st.getLastRowNum(); rowIndex++) {
-              HSSFRow row = st.getRow(rowIndex);
-              if (row == null) {
-                  continue;
-              }
-              int tempRowSize = row.getLastCellNum() + 1;
-              if (tempRowSize > rowSize) {
-                  rowSize = tempRowSize;
-              }
-              String[] values = new String[rowSize];
-              Arrays.fill(values, "");
-              boolean hasValue = false;
-              for (int columnIndex = 0; columnIndex <= row.getLastCellNum(); columnIndex++) {
-                  String value = "";
-                  cell = row.getCell(columnIndex);
-                  if (cell != null) {
-                     // 注意：一定要设成这个，否则可能会出现乱码                	  
-              //       cell.setEncoding(HSSFCell.ENCODING_UTF_16);                     
-                     switch (cell.getCellType()) {
-                     case HSSFCell.CELL_TYPE_STRING:
-                         value = cell.getStringCellValue();
-                         break;
-                     case HSSFCell.CELL_TYPE_NUMERIC:
-                         if (HSSFDateUtil.isCellDateFormatted(cell)) {
-                            Date date = cell.getDateCellValue();
-                            if (date != null) {
-                                value = new SimpleDateFormat("yyyy-MM-dd")
-                                       .format(date);
-                            } else {
-                                value = "";
-                            }
-                         } else {
-                            value = new DecimalFormat("0").format(cell
-                                   .getNumericCellValue());
-                         }
-                         break;
-                     case HSSFCell.CELL_TYPE_FORMULA:
-                         // 导入时如果为公式生成的数据则无值
-                         if (!cell.getStringCellValue().equals("")) {
-                            value = cell.getStringCellValue();
-                         } else {
-                            value = cell.getNumericCellValue() + "";
-                         }
-                         break;
-                     case HSSFCell.CELL_TYPE_BLANK:
-                         break;
-                     case HSSFCell.CELL_TYPE_ERROR:
-                         value = "";
-                         break;
-                     case HSSFCell.CELL_TYPE_BOOLEAN:
-                         value = (cell.getBooleanCellValue() == true ? "Y"
-                                : "N");
-                         break;
-                     default:
-                         value = "";
-                     }
-                  }
-                  if (columnIndex == 0 && value.trim().equals("")) {
-                     break;
-                  }
-                  values[columnIndex] = rightTrim(value);
-                  hasValue = true;
-              }
- 
-              if (hasValue) {
-                  result.add(values);
-              }
-           }
+       List<Map<String,Object>> list = new ArrayList();
+       for(int i=0;i<5000;i++){
+    	   Map<String,Object> map = new HashMap<String, Object>();
+           map.put("masterid", "00"+i);
+           map.put("billdate", "2014-3-18");
+           list.add(map);
        }
-       in.close();
-       String[][] returnArray = new String[result.size()][rowSize];
-       for (int i = 0; i < returnArray.length; i++) {
-           returnArray[i] = (String[]) result.get(i);
+       
+       PoiHelper.Excel_Generate(list, col_id, col_name, filePath , false);
+       
+       //读取Excel
+       File file = new File(filePath);
+       List<String[]> DataArray = PoiHelper.getData(file, 0, 0);
+       for (String[] strings : DataArray) {
+    	   System.out.println(strings[0]+","+strings[1]);
        }
-       return returnArray;
+       
+      
     }
    
-    /**
-     * 去掉字符串右边的空格
-     * @param str 要处理的字符串
-     * @return 处理后的字符串
-     */
-     public static String rightTrim(String str) {
-       if (str == null) {
-           return "";
-       }
-       int length = str.length();
-       for (int i = length - 1; i >= 0; i--) {
-           if (str.charAt(i) != 0x20) {
-              break;
-           }
-           length--;
-       }
-       return str.substring(0, length);
-    }
 }

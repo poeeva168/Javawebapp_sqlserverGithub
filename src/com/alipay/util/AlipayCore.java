@@ -42,10 +42,14 @@ public class AlipayCore {
 
         for (String key : sArray.keySet()) {
             String value = sArray.get(key);
-            if (value == null || value.equals("") || key.equalsIgnoreCase("sign")
+            if (key.equalsIgnoreCase("sign")
+                    || key.equalsIgnoreCase("sign_type")) {
+                    continue;
+                }
+            /*if (value == null || value.equals("") || key.equalsIgnoreCase("sign")
                 || key.equalsIgnoreCase("sign_type")) {
                 continue;
-            }
+            }*/
             result.put(key, value);
         }
 

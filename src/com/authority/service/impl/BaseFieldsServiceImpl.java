@@ -59,16 +59,13 @@ public class BaseFieldsServiceImpl implements BaseFieldsService {
 			}
 		}
 		part = new LinkedHashMap<String, String>();
-		logger.info("-----------开始读取系统默认配置-----------");
 		for (Entry<String, LinkedHashMap<String, String>> entry : all.entrySet()) {
 			String key = entry.getKey();
 			HashMap<String, String> value = entry.getValue();
 			// 为了eval('(${applicationScope.fields.sex})')这个单引号使用,替换所有的'，为\'
 			String val = JackJson.fromObjectToJson(value).replaceAll("\\'", "\\\\'");
-			logger.info(val);
 			part.put(key, val);
 		}
-		logger.info("-----------结束读取系统默认配置-----------");
 		return part;
 	}
 

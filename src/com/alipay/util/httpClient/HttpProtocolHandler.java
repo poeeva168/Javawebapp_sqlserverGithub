@@ -9,6 +9,7 @@ import org.apache.commons.httpclient.HttpConnectionManager;
 import org.apache.commons.httpclient.HttpMethod;
 import org.apache.commons.httpclient.MultiThreadedHttpConnectionManager;
 import org.apache.commons.httpclient.NameValuePair;
+import org.apache.commons.httpclient.SimpleHttpConnectionManager;
 import org.apache.commons.httpclient.methods.GetMethod;
 import org.apache.commons.httpclient.methods.PostMethod;
 import org.apache.commons.httpclient.util.IdleConnectionTimeoutThread;
@@ -35,7 +36,7 @@ import java.util.List;
 
 public class HttpProtocolHandler {
 
-    private static String              DEFAULT_CHARSET                     = "GBK";
+    private static String              DEFAULT_CHARSET                     = "UTF-8";
 
     /** 连接超时时间，由bean factory设置，缺省为8秒钟 */
     private int                        defaultConnectionTimeout            = 8000;
@@ -51,7 +52,7 @@ public class HttpProtocolHandler {
     private int                        defaultMaxTotalConn                 = 80;
 
     /** 默认等待HttpConnectionManager返回连接超时（只有在达到最大连接数时起作用）：1秒*/
-    private static final long          defaultHttpConnectionManagerTimeout = 3 * 1000;
+    private static final long          defaultHttpConnectionManagerTimeout = 20 * 1000;
 
     /**
      * HTTP连接管理器，该连接管理器必须是线程安全的.
@@ -96,7 +97,6 @@ public class HttpProtocolHandler {
      */
     public HttpResponse execute(HttpRequest request, String strParaFileName, String strFilePath) throws HttpException, IOException {
         HttpClient httpclient = new HttpClient(connectionManager);
-
         // 设置连接超时
         int connectionTimeout = defaultConnectionTimeout;
         if (request.getConnectionTimeout() > 0) {
@@ -168,6 +168,7 @@ public class HttpProtocolHandler {
             return null;
         } finally {
             method.releaseConnection();
+//            ((SimpleHttpConnectionManager)httpclient.getHttpConnectionManager()).shutdown();  
         }
         return response;
     }

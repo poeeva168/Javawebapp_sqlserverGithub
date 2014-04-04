@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.authority.dao.WebQudviewMapper" >
+    
+  <sql id="Example_Where_Clause" >
+    <trim prefix="where" prefixOverrides="and|or" >
+      <if test="condition.yxgsm != null" >
+       <![CDATA[ and YXGSM LIKE '%'+#{condition.yxgsm}+'%' ]]>
+      </if>
+      <if test="condition.yxgs_quanc != null" >
+       <![CDATA[ and YXGS_QUANC LIKE '%'+#{condition.yxgs_quanc}+'%' ]]>
+      </if>
+      <if test="condition.fengsm != null" >
+       <![CDATA[ and FENGSM LIKE '%'+#{condition.fengsm}+'%' ]]>
+      </if>
+      <if test="condition.fengs_quanc != null" >
+       <![CDATA[ and FENGS_QUANC LIKE '%'+#{condition.fengs_quanc}+'%' ]]>
+      </if>
+      <if test="condition.pianqm != null" >
+       <![CDATA[ and PIANQM LIKE '%'+#{condition.pianqm}+'%' ]]>
+      </if>
+      <if test="condition.pianq_quanc != null" >
+       <![CDATA[ and PIANQ_QUANC LIKE '%'+#{condition.pianq_quanc}+'%' ]]>
+      </if>
+      <if test="condition.maicm != null" >
+       <![CDATA[ and MAICM LIKE '%'+#{condition.maicm}+'%' ]]>
+      </if>
+      <if test="condition.maic_quanc != null" >
+       <![CDATA[ and MAIC_QUANC LIKE '%'+#{condition.maic_quanc}+'%' ]]>
+      </if>
+      
+    </trim>
+  </sql>
+  <sql id="Base_Column_List" >
+    YXGSID, YXGSM, YXGS_QUANC, YXGS_JIANC, FGSID, FENGSM, FENGS_QUANC, FENGS_JIANC, SSYXGSM, PQID, PIANQM, PIANQ_QUANC, PIANQ_JIANC, SSFGSM, MCID, MAICM, MAIC_QUANC, MAIC_JIANC, SSPQM 
+  </sql> 
+    
+  <select id="selectByDynamicSql" resultType="java.util.HashMap" parameterType="com.authority.pojo.Criteria" >
+    <include refid="common.Oracle_Pagination_Head" />
+    select
+    <if test="distinct" >
+      distinct
+    </if>
+    <include refid="Base_Column_List" />
+    <if test="orderByClause != null" >
+      ,ROW_NUMBER()OVER(order by ${orderByClause}) rownum 
+    </if>
+    <if test="orderByClause == null" >
+      ,ROW_NUMBER()OVER(order by YXGSID) rownum 
+    </if>
+    from web_qudview qud
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+    <include refid="common.Oracle_Pagination_Tail" />
+  </select>
+  
+  
+  <select id="countByExample" parameterType="com.authority.pojo.Criteria" resultType="java.lang.Integer" >
+    select count(*) from web_qudview qud
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </select>
+    
+ 
+</mapper>

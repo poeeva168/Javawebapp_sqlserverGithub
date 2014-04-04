@@ -1,0 +1,290 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.authority.dao.WebMessageMapper" >
+  <resultMap id="BaseResultMap" type="com.authority.pojo.WebMessage" >
+    <id column="ID" property="id" jdbcType="VARCHAR" />
+    <result column="HEAD" property="head" jdbcType="VARCHAR" />
+    <result column="BODY" property="body" jdbcType="CLOB" javaType = "java.lang.String" />
+    <result column="BEGIN_DATE" property="begin_date" jdbcType="TIMESTAMP" />
+    <result column="END_DATE" property="end_date" jdbcType="TIMESTAMP" />
+    <result column="MXDX" property="mxdx" jdbcType="VARCHAR" />
+    <result column="RELEASE_TIME" property="release_time" jdbcType="TIMESTAMP" />
+    <result column="RELEASE_IP" property="release_ip" jdbcType="VARCHAR" />
+    <result column="RELEASE_PER" property="release_per" jdbcType="VARCHAR" />
+    <result column="ISDISPLAY" property="isdisplay" jdbcType="VARCHAR" />
+    <result column="ISREAD" property="isread" jdbcType="VARCHAR" />
+  </resultMap>
+  
+  <resultMap id="map" type="java.util.HashMap"  >
+    <id column="ID" property="id" javaType = "java.lang.String"/>
+    <result column="HEAD" property="head"  javaType = "java.lang.String"/>
+    <result column="BODY" property="body"  javaType = "java.lang.String"/>
+    <result column="BEGIN_DATE" property="begin_date" javaType = "java.lang.String"/>
+    <result column="END_DATE" property="end_date" javaType = "java.lang.String"/>
+    <result column="MXDX" property="mxdx" javaType = "java.lang.String" />
+    <result column="RELEASE_TIME" property="release_time"  javaType = "java.lang.String"/>
+    <result column="RELEASE_IP" property="release_ip" javaType = "java.lang.String" />
+    <result column="RELEASE_PER" property="release_per"  javaType = "java.lang.String"/>
+    <result column="ISDISPLAY" property="isdisplay" javaType = "java.lang.String"/>
+    <result column="ISREAD" property="isread" javaType = "java.lang.String" />
+  </resultMap>
+  
+  
+  <sql id="Example_Where_Clause" >
+    <trim prefix="where" prefixOverrides="and|or" >
+      <if test="condition.headLike != null" >
+       <![CDATA[ and HEAD LIKE '%'+#{condition.headLike}+'%' ]]>
+      </if>
+      <if test="condition.head != null" >
+         and HEAD = #{condition.head}
+      </if>
+      <if test="condition.isdisplay != null" >
+         and ISDISPLAY = #{condition.isdisplay}
+      </if>
+	  <if test="condition.id != null" >
+         and ID = #{condition.id}
+      </if>    
+      <if test="condition.userid != null" >
+		<![CDATA[ and exists(
+		select 'x' from BASE_USER_ROLE a, BASE_ROLES b,BASE_USERS c 
+		where A.ROLE_ID=B.ROLE_ID and 
+		a.USER_ID=#{condition.userid} and 
+		A.USER_ID=C.USER_ID and 
+		( (MES.MXDX like '%'+B.ROLE_NAME+'%' and MES.isdisplay=1 and GETDATE() between MES.BEGIN_DATE and MES.END_DATE )  or C.ACCOUNT='admin') ) 
+		]]>
+		
+		<if test="condition.isread != null" >
+		<![CDATA[ and not exists(
+		select 'x' from BASE_USER_ROLE a, BASE_ROLES b,BASE_USERS c, WEB_MESSAGE_USER d
+        where A.ROLE_ID=B.ROLE_ID and 
+        a.USER_ID=#{condition.userid} and 
+        A.USER_ID=C.USER_ID and 
+        ( (A.USER_ID=D.USER_ID AND D.MESSAGE_ID=MES.ID AND 1=#{condition.isread} ) OR 0=#{condition.isread} ) AND        
+        ( (MES.MXDX like '%'+B.ROLE_NAME+'%' and MES.isdisplay=1 and GETDATE() between MES.BEGIN_DATE and MES.END_DATE )  or C.ACCOUNT='admin') 
+        )
+		]]>
+      </if>
+      
+      </if>
+      
+      
+      
+      
+    </trim>
+  </sql>
+  <sql id="Base_Column_List" >
+    ID, HEAD, BODY, BEGIN_DATE, END_DATE, MXDX, RELEASE_TIME, RELEASE_IP, RELEASE_PER, ISDISPLAY,
+    ( 
+	 case when exists (
+	        select 'x' from BASE_USER_ROLE a, BASE_ROLES b,BASE_USERS c, WEB_MESSAGE_USER d
+	        where A.ROLE_ID=B.ROLE_ID and 
+	        a.USER_ID=#{condition.userid} and 
+	        A.USER_ID=C.USER_ID and 
+	        A.USER_ID=D.USER_ID AND 
+	        D.MESSAGE_ID=MES.ID AND        
+	        ( (MES.MXDX like '%'+B.ROLE_NAME+'%' and MES.isdisplay=1 and GETDATE() between MES.BEGIN_DATE and MES.END_DATE )  or C.ACCOUNT='admin') 
+	 ) then '1' else '0'  end
+	) ISREAD
+  </sql>
+ 
+  <select id="selectByExample" resultMap="BaseResultMap" parameterType="com.authority.pojo.Criteria" >
+    <include refid="common.Oracle_Pagination_Head" />
+    select
+    <if test="distinct" >
+      distinct
+    </if>
+    <include refid="Base_Column_List" />
+    <if test="orderByClause != null" >
+      ,ROW_NUMBER()OVER(order by ${orderByClause}) rownum 
+    </if>
+    <if test="orderByClause == null" >
+      ,ROW_NUMBER()OVER(order by ID) rownum 
+    </if>
+    from WEB_MESSAGE MES
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+    <include refid="common.Oracle_Pagination_Tail" />
+  </select>
+  
+  <select id="selectforexcel" resultType="object[]" parameterType="com.authority.pojo.Criteria" >
+    <include refid="common.Oracle_Pagination_Head" />
+    select
+    <if test="distinct" >
+      distinct
+    </if>
+    <include refid="Base_Column_List" />
+    <if test="orderByClause != null" >
+      ,ROW_NUMBER()OVER(order by ${orderByClause}) rownum 
+    </if>
+    <if test="orderByClause == null" >
+      ,ROW_NUMBER()OVER(order by ID) rownum 
+    </if>
+    from WEB_MESSAGE MES
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+    <include refid="common.Oracle_Pagination_Tail" />
+  </select>
+  
+  <select id="selectlist" resultMap="map" parameterType="com.authority.pojo.Criteria" >
+    <include refid="common.Oracle_Pagination_Head" />
+    select
+    <if test="distinct" >
+      distinct
+    </if>
+    <include refid="Base_Column_List" />
+    <if test="orderByClause != null" >
+      ,ROW_NUMBER()OVER(order by ${orderByClause}) rownum 
+    </if>
+    <if test="orderByClause == null" >
+      ,ROW_NUMBER()OVER(order by ID) rownum 
+    </if>
+    from WEB_MESSAGE MES
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+    <include refid="common.Oracle_Pagination_Tail" />
+  </select>
+  
+  <select id="selectByDynamicSql" resultType="java.util.HashMap" parameterType="com.authority.pojo.Criteria" >
+    <include refid="common.Oracle_Pagination_Head" />
+    select
+    <if test="distinct" >
+      distinct
+    </if>
+    <include refid="Base_Column_List" />
+    <if test="orderByClause != null" >
+      ,ROW_NUMBER()OVER(order by ${orderByClause}) rownum 
+    </if>
+    <if test="orderByClause == null" >
+      ,ROW_NUMBER()OVER(order by ID) rownum 
+    </if>
+    from WEB_MESSAGE MES
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+    <include refid="common.Oracle_Pagination_Tail" />
+  </select>
+  
+  
+  <select id="countByExample" parameterType="com.authority.pojo.Criteria" resultType="java.lang.Integer" >
+    select count(*) from WEB_MESSAGE MES
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </select>
+    
+  <insert id="insertSelective" parameterType="com.authority.pojo.WebMessage" >
+    <selectKey resultType="java.lang.String" keyProperty="id" order="BEFORE" >
+      select NEWID()
+    </selectKey>
+    insert into WEB_MESSAGE
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      	ID,
+      <if test="head != null" >
+        HEAD,
+      </if>
+      <if test="body != null" >
+        BODY,
+      </if>
+      <if test="begin_date != null" >
+        BEGIN_DATE,
+      </if>
+      <if test="end_date != null" >
+        END_DATE,
+      </if>
+      <if test="mxdx != null" >
+        MXDX,
+      </if>
+      <if test="release_time != null" >
+        RELEASE_TIME,
+      </if>
+      <if test="release_ip != null" >
+        RELEASE_IP,
+      </if>
+      <if test="release_per != null" >
+        RELEASE_PER,
+      </if>
+      <if test="isdisplay != null" >
+        ISDISPLAY
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      	#{id},
+      <if test="head != null" >
+        #{head},
+      </if>
+      <if test="body != null" >
+        #{body},
+      </if>
+      <if test="begin_date != null" >
+        #{begin_date},
+      </if>
+      <if test="end_date != null" >
+        #{end_date},
+      </if>
+      <if test="mxdx != null" >
+        #{mxdx},
+      </if>
+      <if test="release_time != null" >
+        #{release_time},
+      </if>
+      <if test="release_ip != null" >
+        #{release_ip},
+      </if>
+      <if test="release_per != null" >
+        #{release_per},
+      </if>
+      <if test="isdisplay != null" >
+        #{isdisplay}
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.authority.pojo.WebMessage"  >
+    update WEB_MESSAGE
+    <set >
+      <if test="head != null" >
+        HEAD=#{head},
+      </if>
+	  <if test="body != null" >
+        BODY=#{body,jdbcType=CLOB javaType=java.lang.String },
+      </if>
+      <if test="begin_date != null" >
+        BEGIN_DATE= #{begin_date},
+      </if>
+      <if test="end_date != null" >
+        END_DATE=#{end_date},
+      </if>
+      <if test="mxdx != null" >
+        MXDX=#{mxdx},
+      </if>
+      <if test="release_time != null" >
+        RELEASE_TIME=#{release_time},
+      </if>
+      <if test="release_ip != null" >
+        RELEASE_IP=#{release_ip},
+      </if>
+      <if test="release_per != null" >
+        RELEASE_PER=#{release_per},
+      </if>
+      <if test="isdisplay != null" >
+        ISDISPLAY=#{isdisplay}
+      </if>      
+    </set>
+    where ID = #{id}
+  </update>
+   <delete id="deleteByPrimaryKey" parameterType="com.authority.pojo.Criteria" >    
+       <if test="id != null" >
+        delete from WEB_MESSAGE where id = #{id}
+      </if>        
+  </delete>  
+  <delete id="deleteByPrimaryKey_batch" parameterType="list" >    
+    <![CDATA[  
+       delete from WEB_MESSAGE where id in  
+    ]]>
+    <foreach collection="list" item="ids"  open="(" separator="," close=")">
+    	#{ids}
+    </foreach>
+  </delete>
+</mapper>
