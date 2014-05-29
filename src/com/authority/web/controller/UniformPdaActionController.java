@@ -400,13 +400,16 @@ public class UniformPdaActionController {
 				
 				//插入数据到明细表
 				//1.全盘 插入系统所有数据
-				insert = "insert into TBusPandDt(MasterId,Sku,PreQty,DocQty,DPrice) " +
-						 "select a.masterid_sys,a.Sku,a.PreQty,d.Qty DocQty,c.Price " +
-						 "from TBusPand_tmp a,TDefSku b,TDefStyle c,TAccStock d "+
-						 "where a.status=1 and a.Sku = b.Sku and b.Style = c.Style and " +
-						 "a.Store = d.Store and a.Sku = d.Sku and " +
-						 "a.MasterId = :MasterId and a.BillDate = :BillDate and a.Store = :Store  and not exists(" +
-						 "select 'x' from TBusPandDt where MasterId = a.masterid_sys and Sku =a.Sku )";
+								
+				insert ="insert into TBusPandDt(MasterId,Sku,PreQty,DocQty,DPrice) " +
+						"select a.masterid_sys,a.Sku,a.PreQty,isnull(d.Qty,0) DocQty,c.Price "+
+						"from TBusPand_tmp a  "+
+						"left join TDefSku b on a.Sku = b.Sku "+
+						"left join TDefStyle c on b.Style = c.Style "+
+						"left join TAccStock d on a.Store = d.Store and a.Sku = d.Sku "+
+						"where a.MasterId = :MasterId and a.BillDate = :BillDate and a.Store = :Store  and " +
+						"not exists( select 'x' from TBusPandDt where MasterId = a.masterid_sys and Sku =a.Sku )";
+				
 				
 			
 				Map<String,Object> paramMap = new HashMap<String, Object>();

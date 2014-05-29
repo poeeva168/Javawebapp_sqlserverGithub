@@ -111,12 +111,12 @@
 	<bean id="TaskPPR_Interface" class="com.henlo.process.TaskPPR_Interface"></bean>
 	
 	
-	
+	<!--
 	<task:scheduled-tasks>
 		<task:scheduled ref="TaskPPR_Interface" method="datadownload"  cron="0 2/2 * * * ?" />
 		<task:scheduled ref="TaskPPR_Interface" method="dataprocess"  cron="0 3/2 * * * ?" />
 	</task:scheduled-tasks>	
-	<!-- 
+	 
 	    0 3/5 * * * ?
 	    0 0 */1 * * ?
 	    5/3 * * * * ? 这里表示的是从第五秒开始 ，每三秒执行一次

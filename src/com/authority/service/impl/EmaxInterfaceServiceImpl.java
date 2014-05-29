@@ -1240,7 +1240,8 @@ public class EmaxInterfaceServiceImpl implements EmaxInterfaceService {
 			//TBusPand 抬头明细表
 			for (String[] strings : DataArray) {
 				Map<String,Object> paramMap = new HashMap<String, Object>();
-				String Store = InterfaceValue("C_STORE","Store",strings[Integer.parseInt(fieldmatchMap.get("STORE").toString())],true);
+				//String Store = InterfaceValue("C_STORE","Store",strings[Integer.parseInt(fieldmatchMap.get("STORE").toString())],true);
+				String Store = strings[Integer.parseInt(fieldmatchMap.get("STORE").toString())];
 				
 				paramMap.put("MasterId", strings[Integer.parseInt(fieldmatchMap.get("MASTERID").toString())]);
 				paramMap.put("BillDate", format_date.format(format_date.parse(strings[Integer.parseInt(fieldmatchMap.get("BILLDATE").toString())])));
@@ -1252,7 +1253,7 @@ public class EmaxInterfaceServiceImpl implements EmaxInterfaceService {
 				paramMap.put("addwho", Account);
 				paramMap.put("addtime", addtime);
 				
-				//判断盘点日期
+				/*//判断盘点日期
 				query = "select count(*) from TDefStore " +
 						"where (Store = :Store and isnull(panddate,'1990-01-01')<:BillDate) ";
 				if(njdbcTemplate.queryForInt(query, paramMap)<1){ //盘点日期有误,不能插入记录
@@ -1260,7 +1261,7 @@ public class EmaxInterfaceServiceImpl implements EmaxInterfaceService {
 							"select :MasterId, :BillDate, :Store, :Opr, :OpDate, :Sku, :PreQty, '2', '与盘点日期不符', :addwho, :addtime " ;
 					njdbcTemplate.update(insert, paramMap);
 					continue;
-				}
+				}*/
 				
 				//判断明细是否重复
 				insert ="insert into TBusPand_TMP(MasterId, BillDate, Store, Opr, OpDate, Sku, PreQty, status, note, addwho, addtime)  " +
@@ -1274,6 +1275,20 @@ public class EmaxInterfaceServiceImpl implements EmaxInterfaceService {
 				}
 				
 			}
+			//根据映射表更新Store 的值
+			update ="update TBusPand_TMP  set Store = ( "+
+					"select LocalKey from BASE_Interface_Value b where Store=b.TargetKey and b.TableName='C_STORE' "+ 
+					"and isactive='Y') where status='0' and exists(" +
+					"select 'x' from BASE_Interface_Value b where Store=b.TargetKey and b.TableName='C_STORE' "+ 
+					"and isactive='Y')";
+			
+			jdbcTemplate.update(update);
+			
+			delete ="delete from TBusPand_TMP where not exists(select 'x' from TDefStore b where Store = b.Store ) " +
+					"and status='0' ";
+			jdbcTemplate.update(delete);
+			
+			
 			//将不存在的库存信息插入到相应的店仓,数量先默认为 0
 			insert ="insert into TAccStock(Store,Sku) " +
 					"select Store,Sku from TBusPand_TMP a where not exists(" +

@@ -58,6 +58,7 @@ Share.AjaxRequest = function (settings) {
      showWaiting = settings.showWaiting === undefined ? true : settings.showWaiting,
      showMsg = settings.showMsg === undefined ? true : settings.showMsg,
      timeout = settings.timeout === undefined ? 60 * 1000 : settings.timeout,
+     method = settings.method === undefined ? 'POST' : settings.method,
     // 发送请求
      waiting = null;
        
@@ -68,6 +69,7 @@ Share.AjaxRequest = function (settings) {
         url: settings.url,
         params: params,
         timeout: timeout,
+        method : method,
         success: function (response, options) {
             if (waiting != null) {
                 waiting.hide();

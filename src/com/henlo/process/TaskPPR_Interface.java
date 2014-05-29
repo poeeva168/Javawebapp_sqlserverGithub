@@ -183,7 +183,7 @@ public class TaskPPR_Interface {
 			if(!ExceptionMsg.trim().equals("")){
 				query = "select * from BASE_Interface_Email where isactive='Y' ";
 				List<Map<String, Object>> EmailMap = jdbcTemplate.queryForList(query);
-				String title = "EMAX--BOS Interface <datadownload> Failed (Release)";
+				String title = "EMAX--BOS Interface <datadownload> Failed (Release PPR)";
 				WebUtils webutils = new WebUtils();
 				try {
 					for (Map<String, Object> map : EmailMap) {
@@ -233,6 +233,7 @@ public class TaskPPR_Interface {
 						continue;
 					String filePath = file.getAbsolutePath();
 					String fileName = file.getName();
+					logger.info("fileName:"+fileName);
 					query = "select * from BASE_Interface_Condition where isactive='Y' and CusCode = :Code";
 					List<Map<String,Object>> Tablelist = njdbcTemplate.queryForList(query,CusMap);
 					boolean exists = false  ; //文件是否存在
@@ -243,6 +244,7 @@ public class TaskPPR_Interface {
 					for (Map<String, Object> Tablemap : Tablelist) {
 						TableName = Tablemap.get("TYPE").toString();
 						if(fileName.toUpperCase().contains(CusMap.get("Code").toString().toUpperCase()+"_"+TableName.toUpperCase())){
+							logger.info("fileName:"+fileName+" 文件存在");
 							exists = true;
 							break;
 						}
@@ -264,6 +266,7 @@ public class TaskPPR_Interface {
 					int startminute = Integer.parseInt(starttime[0])*60+Integer.parseInt(starttime[1]);
 					String  endtime[] = setime[1].split(":");
 					int endminute = Integer.parseInt(endtime[0])*60+Integer.parseInt(endtime[1]);
+					logger.info("当前时间 nowminute:"+nowminute+" startminute:"+startminute+",endminute:"+endminute);
 					
 					if(exists&&flag){
 						if(TableName.equalsIgnoreCase("V_FA_STORAGE")){ //库存更新程序 时间控制
@@ -296,10 +299,11 @@ public class TaskPPR_Interface {
 							String value = map2.get("targetfield").toString().toUpperCase();
 							fieldMap.put(Key, value);
 						}
-						
+						logger.info(file.getName()+" 开始执行……");
 						String result = emaxinterfacecontroller.MethodMapping(file, fieldMap, "admin");
 						if(!result.equals(""))
 							exceptionMsg = result;
+						logger.info(" 执行结束……:"+result);
 					}
 					
 				}
@@ -314,11 +318,11 @@ public class TaskPPR_Interface {
 			update ="update Base_Interface_Task set Status='0' where TaskName='dataprocess' and Isactive='Y' ";
 			jdbcTemplate.update(update);
 			
-			//发送Email 
+			//发送Email  
 			if(!exceptionMsg.equals("")){
 				query = "select * from BASE_Interface_Email where isactive='Y' ";
 				List<Map<String, Object>> EmailMap = jdbcTemplate.queryForList(query);
-				String title = "EMAX--BOS Interface <dataprocess> Failed (Release)";
+				String title = "EMAX--BOS Interface <dataprocess> Failed (Release PPR)";
 				WebUtils webutils = new WebUtils();
 				try {
 					for (Map<String, Object> map : EmailMap) {
