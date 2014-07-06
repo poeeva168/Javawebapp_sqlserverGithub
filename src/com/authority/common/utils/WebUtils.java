@@ -235,7 +235,7 @@ public class WebUtils {
 			// 定义邮件服务器的地址
 			WebUtils web = new WebUtils();
 			
-			props.put("mail.smtp.host", "smtp.exmail.qq.com");
+			props.put("mail.smtp.host", "smtp.qq.com");
 			props.put("mail.smtp.port","465" );
 			props.put("mail.smtp.starttls.enable","true" );
 			props.put("mail.smtp.auth", "true");
