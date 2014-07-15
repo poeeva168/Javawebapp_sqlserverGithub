@@ -12,15 +12,15 @@
 	</plugins>
 		-->
 	<mappers>
-		<mapper resource="sqlmap/common_SqlMap.xml" />
-		<mapper resource="sqlmap/BaseModulesMapper.xml" />
-		<mapper resource="sqlmap/BaseRoleModuleMapper.xml" />
-		<mapper resource="sqlmap/BaseRolesMapper.xml" />
-		<mapper resource="sqlmap/BaseUserRoleMapper.xml" />
-		<mapper resource="sqlmap/BaseUsersMapper.xml" />
-		<mapper resource="sqlmap/BaseFieldsMapper.xml" />
-		<mapper resource="sqlmap/WebMessageMapper.xml" />
-		<mapper resource="sqlmap/CommonModulesMapper.xml" />
-		<mapper resource="sqlmap/WebQudviewMapper.xml" />
+		<mapper resource="config/sqlmap/common_SqlMap.xml" />
+		<mapper resource="config/sqlmap/BaseModulesMapper.xml" />
+		<mapper resource="config/sqlmap/BaseRoleModuleMapper.xml" />
+		<mapper resource="config/sqlmap/BaseRolesMapper.xml" />
+		<mapper resource="config/sqlmap/BaseUserRoleMapper.xml" />
+		<mapper resource="config/sqlmap/BaseUsersMapper.xml" />
+		<mapper resource="config/sqlmap/BaseFieldsMapper.xml" />
+		<mapper resource="config/sqlmap/WebMessageMapper.xml" />
+		<mapper resource="config/sqlmap/CommonModulesMapper.xml" />
+		<mapper resource="config/sqlmap/WebQudviewMapper.xml" />
 	</mappers>
 </configuration>

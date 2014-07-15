@@ -30,6 +30,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import com.alipay.config.AlipayConfig;
 import com.alipay.sign.MD5;
 import com.alipay.util.AlipayCore;
+import com.authority.common.springmvc.SpringContextHolder;
 import com.authority.common.utils.PoiHelper;
 import com.authority.common.utils.WebUtils;
 import com.authority.pojo.Criteria;
@@ -717,16 +718,19 @@ public class EmaxInterfaceController {
 	public Object Task(HttpSession session, HttpServletRequest request) {
 		//读取该单据的执行语句
 		String query = "",CONTENT="",msg="", filename="",sign="",account="",password="";
-		Boolean result = false ;
+		Boolean result = true ;
 		try {
 			String method_name = request.getParameter("method");
 			Class<?> task = null;
 			WebUtils webUtils = new WebUtils();
 			String classpath = webUtils.readValue("config/others/config.properties","Task.classpath");
 			task = Class.forName(classpath);
+			logger.info("method:"+method_name+", classpath:"+classpath+",classname:"+task.getSimpleName());
+			Object task_class = SpringContextHolder.getBean(task.getSimpleName());
 			Method  method = task.getDeclaredMethod(method_name, null);
-			Object task_class = task.newInstance();
 			method.invoke(task_class, null);
+			/*TaskYF_Interface taskYF_Interface = SpringContextHolder.getBean(task.getSimpleName());
+			taskYF_Interface.datadownload();*/
 			msg = method_name +" success ";
 		} catch (Exception e) {
 			// TODO: handle exception
